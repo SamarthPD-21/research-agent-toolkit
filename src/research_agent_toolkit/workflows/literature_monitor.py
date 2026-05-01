@@ -231,7 +231,6 @@ def run_literature_monitor(config_path: str | Path, *, days: int | None = None, 
     LOGGER.info("Wrote outputs to %s", run_dir)
 
     if config.get("state", {}).get("enabled", True):
-        HistoryStore(config.get("state", {}).get("path", "data/history.json")).load().update(included)
         store = HistoryStore(config.get("state", {}).get("path", "data/history.json")).load()
         store.update(included)
         store.save()
