@@ -1,3 +1,5 @@
+> ⚠️ This is a demo email example for illustration only.  
+> Data shown here is not real and some fields are auto-generated.
 # [NeuroPET-MRI Weekly] MRI-to-PET / Tau PET / CLIP 文献更新 - 2026-05-01
 
 一、本周期最重要结论
