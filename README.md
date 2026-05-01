@@ -4,105 +4,125 @@
 [![Literature Monitor](https://github.com/linshuijin6/research-agent-toolkit/actions/workflows/literature-monitor.yml/badge.svg)](https://github.com/linshuijin6/research-agent-toolkit/actions/workflows/literature-monitor.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Research Agent Toolkit** is an open-source automation toolkit for researchers who want AI-powered literature monitoring without relying on paid agent platforms.
+**Research Agent Toolkit** turns a private research assistant workflow into an open, reproducible, GitHub Actions based literature-monitoring system.
 
-The v1.0 release focuses on one production-ready workflow:
+It is designed for researchers who want scheduled AI literature digests without depending on paid agent platforms.
 
-> Weekly literature and model-update monitoring for MRI-to-PET, Tau PET, Alzheimer's disease, medical vision-language models, medical CLIP-style models, GitHub releases, and Hugging Face model cards.
+> v1.0 focuses on one production-ready workflow: **weekly literature and model-update monitoring for MRI-to-PET, Tau PET, Alzheimer's disease, medical vision-language models, medical CLIP-style models, GitHub releases, and Hugging Face model cards.**
 
-A Simplified Chinese README is available at [README.zh-CN.md](README.zh-CN.md).
+简体中文说明见 [README.zh-CN.md](README.zh-CN.md).
+
+---
+
+## What you get
+
+| Capability | v1.0 status |
+|---|---:|
+| Scheduled literature monitoring | Yes |
+| NeuroPET / MRI-to-PET / Tau PET / AD preset | Yes |
+| Medical VLM / medical CLIP / foundation-model preset | Yes |
+| GitHub Actions automation | Yes |
+| Chinese weekly email report | Yes |
+| OpenAI-compatible LLM backend | Yes |
+| SMTP email delivery | Yes, disabled by default |
+| Gmail API sender | Experimental |
+| Notion workflow | Planned, not in v1.0 |
+
+See the [v1.0 completeness audit](docs/completeness-audit.zh-CN.md) for the exact release boundary.
+
+---
 
 ## Why this project exists
 
-Many researchers already use private AI agents to monitor literature, summarize papers, and send weekly reports. However, most students and labs do not have access to paid agent platforms. This repository turns a private-agent workflow into a reproducible, forkable, GitHub Actions based system.
+Many researchers already use private AI agents to monitor papers, summarize updates, and send weekly reports. Most students and labs, however, do not have access to paid agent platforms. This repository makes that workflow forkable, inspectable, and cheaper to run.
 
-The toolkit is designed for:
+The toolkit is especially useful for:
 
 - biomedical engineering students;
 - medical imaging researchers;
 - PET (Positron Emission Tomography) / MRI (Magnetic Resonance Imaging) researchers;
 - AI-for-science users who want scheduled literature digests;
-- open-source maintainers who need a transparent, auditable research automation workflow.
+- open-source maintainers who prefer transparent automation over black-box agents.
 
-## v1.0 features
+---
 
-- NeuroPET / MRI-to-PET / Tau PET / AD literature monitoring.
-- Medical VLM (Vision-Language Model), medical CLIP (Contrastive Language-Image Pretraining), foundation-model, GitHub, and Hugging Face update monitoring.
-- 7-day default search window, with automatic 30-day fallback when strong results are insufficient.
-- Source verification and title matching before inclusion.
-- DOI, arXiv ID, PubMed ID, normalized-title, GitHub URL, and Hugging Face URL deduplication.
-- Relevance, novelty, reproducibility, source-quality, and timeliness ranking.
-- Chinese weekly email report generation with a fixed six-section structure.
-- OpenAI-compatible LLM provider support, including OpenAI, DeepSeek, Doubao, and other compatible endpoints.
-- SMTP email delivery, with dry-run enabled by default.
-- Optional Gmail API sender implementation.
-- GitHub Actions scheduled workflow.
-- JSON and Markdown artifacts for every run.
-- No Notion integration in v1.0. Notion workflows are intentionally deferred to a later release.
+## Workflow overview
+
+```mermaid
+flowchart LR
+    A[GitHub Actions schedule] --> B[Search sources]
+    B --> C[Verify title, date, and link]
+    C --> D[Deduplicate]
+    D --> E[Rank by relevance and reproducibility]
+    E --> F[Generate Chinese weekly email]
+    F --> G[Write Markdown and JSON artifacts]
+    F --> H[Optional SMTP or Gmail delivery]
+```
+
+Default search flow:
+
+1. Search the latest 7 days.
+2. If strong results are insufficient, extend to 30 days.
+3. Verify metadata before inclusion.
+4. Keep at most 5 strong results per module and 3 indirect results.
+5. Produce Markdown and JSON artifacts for every run.
+
+---
 
 ## What it monitors
 
 ### Module A: NeuroPET / MRI-to-PET / Tau PET / AD
 
-The default configuration monitors topics such as:
+Default topics include:
 
 - MRI-to-PET synthesis;
-- Tau PET prediction or analysis;
+- pseudo-PET generation;
+- Tau PET prediction and analysis;
 - amyloid PET and FDG PET;
-- PET reconstruction or pseudo-PET generation;
+- PET reconstruction;
 - multimodal neuroimaging for Alzheimer's disease;
 - deep learning methods involving PET and MRI.
 
 ### Module B: Medical VLM / medical CLIP / foundation-model updates
 
-The default configuration monitors:
+Default topics include:
 
 - medical vision-language models;
 - biomedical CLIP-style models;
 - radiology foundation models;
 - GitHub repositories and releases;
-- Hugging Face models and datasets;
-- model cards, dataset cards, and project pages.
+- Hugging Face models, datasets, model cards, and dataset cards.
+
+---
+
+## Example output
+
+The generated Chinese weekly email always uses six sections:
+
+1. 本周期最重要结论
+2. MRI-to-PET / Tau PET / Alzheimer's disease 强相关论文
+3. 医学图像大模型 / 医学视觉语言模型更新
+4. 间接相关但可能有启发的论文或模型
+5. 未纳入内容与原因
+6. 下周建议关注关键词
+
+A demo report is available at [docs/demo-email.zh-CN.md](docs/demo-email.zh-CN.md).
+
+---
 
 ## Quick start
-
-### 1. Fork or create the repository
-
-Create a GitHub repository and upload this code, or clone it locally:
 
 ```bash
 git clone https://github.com/linshuijin6/research-agent-toolkit.git
 cd research-agent-toolkit
-```
-
-### 2. Install locally
-
-```bash
 python -m pip install --upgrade pip
 pip install -e ".[dev]"
-```
-
-### 3. Create your configuration
-
-```bash
 cp config.example.yaml config.yaml
-```
-
-Edit `config.yaml` and set your topics, recipient, LLM provider, and email mode.
-
-### 4. Validate configuration
-
-```bash
 rat validate-config --config config.yaml
-```
-
-### 5. Run in dry-run mode
-
-```bash
 rat literature-monitor --config config.yaml --dry-run
 ```
 
-Generated files will be written to:
+Generated files are written to:
 
 ```text
 outputs/YYYY-MM-DD/
@@ -117,20 +137,11 @@ candidates.json
 excluded.json
 ```
 
-### 6. Enable scheduled GitHub Actions
+For a more detailed Chinese setup guide, see [docs/quickstart.zh-CN.md](docs/quickstart.zh-CN.md).
 
-The default workflow runs every Monday at 00:00 UTC, which is 08:00 Beijing time.
-
-```yaml
-on:
-  schedule:
-    - cron: "0 0 * * 1"
-  workflow_dispatch:
-```
+---
 
 ## Configuration
-
-The main configuration file is `config.yaml`. A complete example is provided in `config.example.yaml`.
 
 Minimal LLM settings:
 
@@ -158,9 +169,7 @@ LLM_API_KEY=your_api_key
 LLM_MODEL=gpt-4o
 ```
 
-## GitHub Secrets
-
-Recommended secrets:
+Recommended GitHub Actions secrets:
 
 ```text
 LLM_BASE_URL
@@ -175,50 +184,28 @@ SMTP_PASSWORD
 SMTP_FROM
 ```
 
-`GITHUB_TOKEN` is automatically available in GitHub Actions. You do not need to create it manually.
+`GITHUB_TOKEN` is automatically available in GitHub Actions.
 
-## Email delivery
+---
 
-Email sending is disabled by default.
+## GitHub Actions
 
-```yaml
-email:
-  enabled: false
-
-safety:
-  dry_run: true
-```
-
-To enable SMTP sending, set:
+The default workflow runs every Monday at 00:00 UTC, which is 08:00 Beijing time.
 
 ```yaml
-email:
-  enabled: true
-  mode: smtp
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
 ```
 
-and provide SMTP secrets in GitHub repository settings.
+The workflow runs in dry-run mode by default, uploads artifacts, and does not send email unless you explicitly enable delivery.
 
-The default recipient in `config.example.yaml` is:
-
-```text
-1170414294@qq.com
-```
-
-## Report format
-
-The Chinese weekly report always uses six sections:
-
-1. 本周期最重要结论
-2. MRI-to-PET / Tau PET / Alzheimer's disease 强相关论文
-3. 医学图像大模型 / 医学视觉语言模型更新
-4. 间接相关但可能有启发的论文或模型
-5. 未纳入内容与原因
-6. 下周建议关注关键词
+---
 
 ## Ranking formula
 
-Each candidate receives a 0-100 score:
+Each candidate receives a 0-100 priority score:
 
 \[
 S = 20\left(0.40R + 0.20N + 0.15C + 0.10P + 0.10Q + 0.05T\right)
@@ -230,29 +217,23 @@ LaTeX source:
 S = 20\left(0.40R + 0.20N + 0.15C + 0.10P + 0.10Q + 0.05T\right)
 ```
 
-Where:
+Where `R` is relevance, `N` is novelty, `C` is clinical or research value, `P` is reproducibility, `Q` is source quality, and `T` is timeliness.
 
-- `R`: relevance;
-- `N`: novelty;
-- `C`: clinical or research value;
-- `P`: reproducibility;
-- `Q`: source quality;
-- `T`: timeliness.
+---
 
 ## Safety principles
 
 - No API key is committed to the repository.
 - No email password is committed to the repository.
-- All secrets should be stored in GitHub Secrets or local environment variables.
 - Dry-run is enabled by default.
 - Source verification is required by default.
-- The workflow never writes to Notion in v1.0.
+- v1.0 does not read or write Notion.
 - The workflow does not scrape paid full text or bypass website restrictions.
 - The LLM is not allowed to invent paper titles, DOI values, code links, licenses, weights, or datasets.
 
-## Roadmap
+---
 
-Planned future releases:
+## Roadmap
 
 - v1.1: Gmail draft mode improvements.
 - v1.2: MCP (Model Context Protocol) adapter.
@@ -260,9 +241,11 @@ Planned future releases:
 - v1.4: Web dashboard.
 - v1.5: More research-topic presets beyond biomedical imaging.
 
+---
+
 ## Citation
 
-If this project helps your research workflow, please cite the repository using the metadata in [CITATION.cff](CITATION.cff).
+If this project helps your research workflow, please cite the repository using [CITATION.cff](CITATION.cff).
 
 ## License
 
