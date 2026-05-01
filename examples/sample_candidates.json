@@ -1,0 +1,10 @@
+[
+  {
+    "id": "arxiv:example",
+    "module": "neuro_pet",
+    "item_type": "paper",
+    "title": "Example MRI-to-PET paper title",
+    "source": "arXiv",
+    "url": "https://arxiv.org/abs/example"
+  }
+]

@@ -1,0 +1,113 @@
+project:
+  name: research-agent-toolkit
+  workflow: literature-monitor
+  language: zh-CN
+  timezone: Asia/Shanghai
+
+schedule:
+  default_days: 7
+  fallback_days: 30
+  min_strong_results: 2
+
+topics:
+  neuro_pet:
+    enabled: true
+    max_strong_results: 5
+    keywords:
+      - MRI-to-PET
+      - PET synthesis
+      - pseudo-PET
+      - Tau PET
+      - amyloid PET
+      - FDG PET
+      - Alzheimer's disease
+      - multimodal neuroimaging
+      - PET reconstruction
+      - MRI PET deep learning
+
+  medical_vlm:
+    enabled: true
+    max_strong_results: 5
+    keywords:
+      - medical vision-language model
+      - medical VLM
+      - biomedical VLM
+      - medical CLIP
+      - biomedical CLIP
+      - radiology foundation model
+      - medical image foundation model
+      - vision-language model radiology
+      - pathology vision-language model
+
+sources:
+  pubmed:
+    enabled: true
+    max_results_per_query: 5
+  arxiv:
+    enabled: true
+    max_results_per_query: 5
+  crossref:
+    enabled: true
+    max_results_per_query: 5
+  europe_pmc:
+    enabled: true
+    max_results_per_query: 5
+  semantic_scholar:
+    enabled: true
+    max_results_per_query: 5
+    api_key_env: SEMANTIC_SCHOLAR_API_KEY
+  github:
+    enabled: true
+    max_results_per_query: 5
+    token_env: GITHUB_TOKEN
+  huggingface:
+    enabled: true
+    max_results_per_query: 5
+    token_env: HUGGINGFACE_TOKEN
+  web_search:
+    enabled: false
+    provider: tavily
+    api_key_env: TAVILY_API_KEY
+    max_results_per_query: 5
+
+llm:
+  provider: openai_compatible
+  base_url_env: LLM_BASE_URL
+  api_key_env: LLM_API_KEY
+  model_env: LLM_MODEL
+  temperature: 0.2
+  max_tokens: 6000
+  enabled: true
+
+email:
+  enabled: false
+  mode: smtp
+  recipient: 1170414294@qq.com
+  subject_prefix: "[NeuroPET-MRI Weekly]"
+  smtp:
+    host_env: SMTP_HOST
+    port_env: SMTP_PORT
+    username_env: SMTP_USERNAME
+    password_env: SMTP_PASSWORD
+    from_env: SMTP_FROM
+  gmail_api:
+    client_id_env: GMAIL_CLIENT_ID
+    client_secret_env: GMAIL_CLIENT_SECRET
+    refresh_token_env: GMAIL_REFRESH_TOKEN
+    sender_env: GMAIL_SENDER
+
+safety:
+  dry_run: true
+  require_verified_title: true
+  exclude_unverified_items: true
+  allow_api_metadata_as_verified: true
+  max_items_per_module: 5
+  max_indirect_items: 3
+  request_timeout_seconds: 20
+
+state:
+  enabled: true
+  path: data/history.json
+
+outputs:
+  dir: outputs

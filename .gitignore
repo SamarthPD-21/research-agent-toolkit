@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+
+# Local environment
+.env
+.env.*
+!.env.example
+config.yaml
+
+# Runtime outputs
+outputs/
+data/history.json
+
+# IDE
+.vscode/
+.idea/
+.DS_Store

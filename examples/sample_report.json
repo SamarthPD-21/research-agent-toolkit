@@ -1,0 +1,9 @@
+{
+  "run_date": "2026-05-01",
+  "search_window_days": 7,
+  "fallback_used": false,
+  "email": {
+    "subject": "[NeuroPET-MRI Weekly] MRI-to-PET / Tau PET / CLIP 文献更新 - 2026-05-01",
+    "body_markdown": "See sample_email_zh.md"
+  }
+}

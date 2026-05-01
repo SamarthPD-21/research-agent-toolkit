@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use Research Agent Toolkit, please cite this repository."
+title: "Research Agent Toolkit: GitHub Actions based AI literature monitoring for researchers"
+authors:
+  - family-names: "Lin"
+    given-names: "Shuijin"
+repository-code: "https://github.com/linshuijin6/research-agent-toolkit"
+license: "Apache-2.0"
+version: "1.0.0"
+date-released: "2026-05-01"
+keywords:
+  - literature-monitoring
+  - biomedical-engineering
+  - medical-imaging
+  - PET
+  - MRI
+  - AI-agent
+  - GitHub-Actions
