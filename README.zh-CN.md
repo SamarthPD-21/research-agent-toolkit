@@ -4,11 +4,31 @@
 [![Literature Monitor](https://github.com/linshuijin6/research-agent-toolkit/actions/workflows/literature-monitor.yml/badge.svg)](https://github.com/linshuijin6/research-agent-toolkit/actions/workflows/literature-monitor.yml)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-**Research Agent Toolkit** 是一个面向科研人员的开源 AI 自动化工具箱。v1.0 专注于一件事：
+**Research Agent Toolkit** 是一个面向科研人员的开源 AI 自动化工具箱，用 GitHub Actions、网络检索、LLM 和邮件系统，把私有科研 Agent 工作流变成可复现、可 fork、可审计的开源项目。
 
-> 使用 GitHub Actions、网络检索、LLM 和邮件系统，自动监控 MRI-to-PET、Tau PET、AD、医学图像大模型、医学 VLM、医学 CLIP、GitHub 项目和 Hugging Face 模型更新，并生成中文文献周报邮件。
+> v1.0 专注于一个稳定工作流：**自动监控 MRI-to-PET、Tau PET、AD、医学图像大模型、医学 VLM、医学 CLIP、GitHub 项目和 Hugging Face 模型更新，并生成中文文献周报邮件。**
 
-英文 README 见 [README.md](README.md)。
+English README: [README.md](README.md)
+
+---
+
+## 你可以用它做什么
+
+| 能力 | v1.0 状态 |
+|---|---:|
+| 定时文献监控 | 已支持 |
+| NeuroPET / MRI-to-PET / Tau PET / AD 预设 | 已支持 |
+| 医学 VLM / 医学 CLIP / foundation model 预设 | 已支持 |
+| GitHub Actions 自动运行 | 已支持 |
+| 中文周报邮件 | 已支持 |
+| OpenAI-compatible LLM 后端 | 已支持 |
+| SMTP 邮件发送 | 已支持，默认关闭 |
+| Gmail API 发送 | 实验性支持 |
+| Notion workflow | 计划中，v1.0 不包含 |
+
+完整边界见：[v1.0 完整性审计](docs/completeness-audit.zh-CN.md)。
+
+---
 
 ## 项目目标
 
@@ -22,21 +42,30 @@
 - 关注 MRI-to-PET、Tau PET、AD (Alzheimer's disease，阿尔茨海默病) 的用户；
 - 想要低成本自动化文献监控的科研人员。
 
-## v1.0 功能
+---
 
-- NeuroPET / MRI-to-PET / Tau PET / AD 文献监控。
-- 医学 VLM (Vision-Language Model，视觉语言模型)、医学 CLIP (Contrastive Language-Image Pretraining，对比语言-图像预训练)、医学基础模型、GitHub 和 Hugging Face 更新监控。
-- 默认检索最近 7 天；强相关结果不足时自动扩展到最近 30 天。
-- 纳入正文前进行链接核验和标题匹配。
-- 支持 DOI (Digital Object Identifier，数字对象唯一标识符)、arXiv ID、PubMed ID、标准化标题、GitHub URL 和 Hugging Face URL 去重。
-- 支持相关性、新颖性、可复现性、来源质量和时效性评分。
-- 生成固定六段式中文周报邮件。
-- 支持 OpenAI-compatible API (OpenAI 兼容接口)，可接入 OpenAI、DeepSeek、豆包等模型服务。
-- 支持 SMTP (Simple Mail Transfer Protocol，简单邮件传输协议) 邮件发送，默认 dry-run，不会自动发邮件。
-- 提供可选 Gmail API (Application Programming Interface，应用程序编程接口) 发送实现。
-- 支持 GitHub Actions 定时任务。
-- 每次运行输出 Markdown 和 JSON 文件，便于检查、归档和二次处理。
-- v1.0 暂不集成 Notion，不写入 Notion daily summary。
+## 工作流概览
+
+```mermaid
+flowchart LR
+    A[GitHub Actions 定时触发] --> B[检索文献和模型来源]
+    B --> C[核验标题、日期和链接]
+    C --> D[去重]
+    D --> E[按相关性和可复现性排序]
+    E --> F[生成中文周报邮件]
+    F --> G[输出 Markdown / JSON]
+    F --> H[可选 SMTP / Gmail 发送]
+```
+
+默认流程：
+
+1. 先检索最近 7 天。
+2. 强相关结果不足时扩展到最近 30 天。
+3. 纳入正文前进行标题、日期和链接核验。
+4. 每个模块最多保留 5 条强相关结果。
+5. 每次运行输出 Markdown 和 JSON 文件。
+
+---
 
 ## 监控内容
 
@@ -45,9 +74,10 @@
 默认关注：
 
 - MRI-to-PET 合成；
+- pseudo-PET 生成；
 - Tau PET 预测、分析和定量；
 - amyloid PET、FDG PET 与 AD；
-- PET 重建、pseudo-PET 生成；
+- PET 重建；
 - 多模态神经影像；
 - PET 与 MRI 结合的深度学习方法。
 
@@ -71,43 +101,36 @@
 - GitHub 仓库、release 和 README；
 - Hugging Face 模型页、数据集页、model card 和 dataset card。
 
-## 快速开始
+---
 
-### 1. 克隆或上传仓库
+## 示例输出
+
+每次运行生成的中文邮件固定包含六部分：
+
+1. 本周期最重要结论
+2. MRI-to-PET / Tau PET / Alzheimer's disease 强相关论文
+3. 医学图像大模型 / 医学视觉语言模型更新
+4. 间接相关但可能有启发的论文或模型
+5. 未纳入内容与原因
+6. 下周建议关注关键词
+
+示例邮件见：[docs/demo-email.zh-CN.md](docs/demo-email.zh-CN.md)。
+
+---
+
+## 快速开始
 
 ```bash
 git clone https://github.com/linshuijin6/research-agent-toolkit.git
 cd research-agent-toolkit
-```
-
-### 2. 安装
-
-```bash
 python -m pip install --upgrade pip
 pip install -e ".[dev]"
-```
-
-### 3. 创建配置文件
-
-```bash
 cp config.example.yaml config.yaml
-```
-
-然后编辑 `config.yaml`，设置你的研究关键词、邮件收件人、LLM 接口和邮件发送方式。
-
-### 4. 检查配置
-
-```bash
 rat validate-config --config config.yaml
-```
-
-### 5. dry-run 运行
-
-```bash
 rat literature-monitor --config config.yaml --dry-run
 ```
 
-默认输出目录：
+输出目录：
 
 ```text
 outputs/YYYY-MM-DD/
@@ -122,6 +145,10 @@ candidates.json
 excluded.json
 ```
 
+更详细教程见：[docs/quickstart.zh-CN.md](docs/quickstart.zh-CN.md)。
+
+---
+
 ## GitHub Actions 定时运行
 
 v1.0 默认每周一 UTC 00:00 运行，对应北京时间每周一 08:00：
@@ -134,6 +161,8 @@ on:
 ```
 
 你也可以在 GitHub Actions 页面手动触发。
+
+---
 
 ## 配置 GitHub Secrets
 
@@ -154,6 +183,8 @@ SMTP_FROM
 
 `GITHUB_TOKEN` 由 GitHub Actions 自动提供，不需要手动添加。
 
+---
+
 ## 模型配置示例
 
 DeepSeek 示例：
@@ -173,6 +204,8 @@ LLM_MODEL=gpt-4o
 ```
 
 豆包或其他 OpenAI-compatible 服务也可以通过同样的 `base_url + api_key + model` 配置接入。
+
+---
 
 ## 邮件发送
 
@@ -200,16 +233,7 @@ email:
 1170414294@qq.com
 ```
 
-## 中文邮件格式
-
-每次运行生成的中文邮件固定包含六部分：
-
-1. 本周期最重要结论
-2. MRI-to-PET / Tau PET / Alzheimer's disease 强相关论文
-3. 医学图像大模型 / 医学视觉语言模型更新
-4. 间接相关但可能有启发的论文或模型
-5. 未纳入内容与原因
-6. 下周建议关注关键词
+---
 
 ## 评分公式
 
@@ -234,6 +258,8 @@ S = 20\left(0.40R + 0.20N + 0.15C + 0.10P + 0.10Q + 0.05T\right)
 - `Q`：来源质量；
 - `T`：时效性。
 
+---
+
 ## 安全原则
 
 - 不提交任何 API Key。
@@ -245,6 +271,8 @@ S = 20\left(0.40R + 0.20N + 0.15C + 0.10P + 0.10Q + 0.05T\right)
 - 不爬取付费全文，不绕过网站权限限制。
 - LLM 不允许编造论文标题、DOI、代码链接、权重、许可证或训练数据。
 
+---
+
 ## Roadmap
 
 后续计划：
@@ -254,6 +282,8 @@ S = 20\left(0.40R + 0.20N + 0.15C + 0.10P + 0.10Q + 0.05T\right)
 - v1.3：加入 Notion daily summary 工作流。
 - v1.4：加入 Web dashboard。
 - v1.5：加入更多科研方向 preset。
+
+---
 
 ## 引用
 
