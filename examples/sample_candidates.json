@@ -6,5 +6,15 @@
     "title": "Example MRI-to-PET paper title",
     "source": "arXiv",
     "url": "https://arxiv.org/abs/example"
+  },
+  {
+    "id": "blog:example",
+    "module": "general",
+    "item_type": "blog",
+    "title": "Random Blog Post",
+    "source": "unknown",
+    "url": "https://example.com/blog",
+    "included": false,
+    "reason": "No reliable citation (demo example)"
   }
 ]
